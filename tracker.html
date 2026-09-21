@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#2c3e50">
+  <title>TRACKER</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      padding: 20px;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: #f2f2f7;
+      color: #222;
+    }
+
+    .container {
+      max-width: 430px;
+      margin: 0 auto;
+    }
+
+    h1 {
+      text-align: center;
+      margin: 10px 0 20px;
+      font-size: 30px;
+    }
+
+    .card {
+      background: white;
+      border-radius: 16px;
+      padding: 20px;
+      margin-bottom: 15px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+    }
+
+    label {
+      display: block;
+      font-weight: 600;
+      margin: 14px 0 6px;
+    }
+
+    input {
+      width: 100%;
+      padding: 13px;
+      font-size: 17px;
+      border: 1px solid #ccc;
+      border-radius: 10px;
+      background: white;
+    }
+
+    button {
+      width: 100%;
+      border: 0;
+      border-radius: 12px;
+      padding: 14px;
+      margin-top: 18px;
+      font-size: 17px;
+      font-weight: 600;
+      cursor: pointer;
+      background: #2c3e50;
+      color: white;
+    }
+
+    button.secondary {
+      background: #e5e5ea;
+      color: #222;
+    }
+
+    .info {
+      background: #f7f7f7;
+      border-radius: 10px;
+      padding: 12px;
+      margin-top: 12px;
+      font-size: 14px;
+    }
+
+    .result {
+      display: none;
+    }
+
+    .result-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 15px;
+      padding: 9px 0;
+      border-bottom: 1px solid #eee;
+    }
+
+    .result-row:last-child {
+      border-bottom: 0;
+    }
+
+    .status {
+      margin-top: 18px;
+      padding: 15px;
+      border-radius: 12px;
+      text-align: center;
+      font-weight: 700;
+      font-size: 18px;
+    }
+
+    .normal {
+      background: #dff5e3;
+      color: #176b2c;
+    }
+
+    .behind {
+      background: #ffe1e1;
+      color: #a00000;
+    }
+
+    .error {
+      display: none;
+      margin-top: 12px;
+      padding: 12px;
+      border-radius: 10px;
+      background: #ffe1e1;
+      color: #a00000;
+      font-weight: 600;
+    }
+
+    .small {
+      font-size: 13px;
+      color: #666;
+      line-height: 1.4;
+    }
+
+    .footer {
+      text-align: center;
+      color: #888;
+      font-size: 12px;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="container">
+
+  <h1>TRACKER</h1>
+
+  <!-- =====================================================
+       ПОЧАТКОВІ ДАНІ
+       Зберігаються тільки на цьому пристрої.
+       ===================================================== -->
+
+  <div class="card">
+
+    <h2>Початкові дані</h2>
+
+    <label for="startDate">Дата початку контролю</label>
+    <input type="date" id="startDate">
+
+    <label for="startVal">Початкове показання</label>
+    <input type="number" id="startVal" min="0" step="1">
+
+    <button onclick="saveStartData()">Зберегти початкові дані</button>
+
+    <div id="savedInfo" class="info" style="display:none;"></div>
+
+    <button
+      id="editButton"
+      class="secondary"
+      onclick="enableEditing()"
+      style="display:none;">
+      Змінити початкові дані
+    </button>
+
+  </div>
+
+
+  <!-- =====================================================
+       ПОТОЧНІ ДАНІ
+       Не зберігаються.
+       ===================================================== -->
+
+  <div class="card">
+
+    <h2>Поточні дані</h2>
+
+    <label for="currentDate">Поточна дата</label>
+    <input type="date" id="currentDate">
+
+    <label for="currentVal">Поточне показання</label>
+    <input type="number" id="currentVal" min="0" step="1">
+
+    <button onclick="calculate()">Розрахувати</button>
+
+    <div id="error" class="error"></div>
+
+  </div>
+
+
+  <!-- =====================================================
+       РЕЗУЛЬТАТ
+       ===================================================== -->
+
+  <div id="result" class="card result">
+
+    <h2>РЕЗУЛЬТАТИ МОНІТОРИНГУ:</h2>
+
+    <div class="result-row">
+      <span>Пройшло днів:</span>
+      <strong id="daysResult"></strong>
+    </div>
+
+    <div class="result-row">
+      <span>«Надихав» всього:</span>
+      <strong id="usedResult"></strong>
+    </div>
+
+    <div class="result-row">
+      <span>В середньому за добу:</span>
+      <strong id="averageResult"></strong>
+    </div>
+
+    <div id="status" class="status"></div>
+
+  </div>
+
+
+  <div class="footer">
+    Початкові дані зберігаються тільки в цьому браузері.
+  </div>
+
+</div>
+
+
+<script>
+"use strict";
+
+/*
+============================================================
+TRACKER — веб-версія
+============================================================
+
+Логіка відповідає робочому tracker.sh:
+
+1. Початкова дата і початкове показання задаються один раз.
+2. Вони зберігаються локально на пристрої.
+3. Поточна дата і поточне показання НЕ зберігаються.
+4. Кожен розрахунок виконується від початкових даних.
+5. Норма = 4 години на кожен день.
+6. Середнє = використано / кількість днів.
+
+============================================================
+*/
+
+
+// Ключ, під яким початкові дані зберігаються в браузері.
+const STORAGE_KEY = "tracker_start_data";
+
+
+// ----------------------------------------------------------
+// Допоміжна функція: сьогоднішня дата
+// ----------------------------------------------------------
+
+function todayISO() {
+  const now = new Date();
+
+  const year = now.getFullYear();
+  const month = String(now.getMonth() + 1).padStart(2, "0");
+  const day = String(now.getDate()).padStart(2, "0");
+
+  return `${year}-${month}-${day}`;
+}
+
+
+// ----------------------------------------------------------
+// Получение даты без проблем с часовыми поясами
+// ----------------------------------------------------------
+
+function parseDate(dateString) {
+  const parts = dateString.split("-");
+
+  if (parts.length !== 3) {
+    return null;
+  }
+
+  const year = Number(parts[0]);
+  const month = Number(parts[1]);
+  const day = Number(parts[2]);
+
+  const date = new Date(year, month - 1, day);
+
+  if (
+    date.getFullYear() !== year ||
+    date.getMonth() !== month - 1 ||
+    date.getDate() !== day
+  ) {
+    return null;
+  }
+
+  return date;
+}
+
+
+// ----------------------------------------------------------
+// Показ ошибки
+// ----------------------------------------------------------
+
+function showError(message) {
+  const error = document.getElementById("error");
+
+  error.textContent = message;
+  error.style.display = "block";
+}
+
+
+// ----------------------------------------------------------
+// Скрыть ошибку
+// ----------------------------------------------------------
+
+function hideError() {
+  const error = document.getElementById("error");
+
+  error.textContent = "";
+  error.style.display = "none";
+}
+
+
+// ----------------------------------------------------------
+// Загрузка сохранённых начальных данных
+// ----------------------------------------------------------
+
+function loadStartData() {
+
+  const saved = localStorage.getItem(STORAGE_KEY);
+
+  if (!saved) {
+    document.getElementById("startDate").value = todayISO();
+    return;
+  }
+
+  try {
+
+    const data = JSON.parse(saved);
+
+    document.getElementById("startDate").value = data.date;
+    document.getElementById("startVal").value = data.value;
+
+    document.getElementById("startDate").disabled = true;
+    document.getElementById("startVal").disabled = true;
+
+    document.querySelector(
+      'button[onclick="saveStartData()"]'
+    ).style.display = "none";
+
+    document.getElementById("editButton").style.display = "block";
+
+    document.getElementById("savedInfo").innerHTML =
+      `<strong>Збережено:</strong><br>
+       ${data.date}<br>
+       Початкове показання: ${data.value}`;
+
+    document.getElementById("savedInfo").style.display = "block";
+
+  } catch (error) {
+
+    localStorage.removeItem(STORAGE_KEY);
+
+    document.getElementById("startDate").value = todayISO();
+  }
+}
+
+
+// ----------------------------------------------------------
+// Сохранение начальных данных
+// ----------------------------------------------------------
+
+function saveStartData() {
+
+  hideError();
+
+  const date = document.getElementById("startDate").value;
+  const value = document.getElementById("startVal").value.trim();
+
+  if (!date) {
+    showError("Вкажіть початкову дату.");
+    return;
+  }
+
+  if (value === "" || !/^[0-9]+$/.test(value)) {
+    showError("Початкове показання повинно бути цілим числом.");
+    return;
+  }
+
+  if (!parseDate(date)) {
+    showError("Початкова дата некоректна.");
+    return;
+  }
+
+  const data = {
+    date: date,
+    value: Number(value)
+  };
+
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+
+  loadStartData();
+
+  document.getElementById("savedInfo").innerHTML =
+    `<strong>Початкові дані збережено.</strong><br>
+     ${date}<br>
+     Початкове показання: ${value}`;
+
+  document.getElementById("savedInfo").style.display = "block";
+}
+
+
+// ----------------------------------------------------------
+// Разрешить изменение начальных данных
+//
+// Использовать только если действительно нужно изменить
+// исходную точку.
+// ----------------------------------------------------------
+
+function enableEditing() {
+
+  document.getElementById("startDate").disabled = false;
+  document.getElementById("startVal").disabled = false;
+
+  document.querySelector(
+    'button[onclick="saveStartData()"]'
+  ).style.display = "block";
+
+  document.getElementById("editButton").style.display = "none";
+}
+
+
+// ----------------------------------------------------------
+// Основной расчёт
+// ----------------------------------------------------------
+
+function calculate() {
+
+  hideError();
+
+  const saved = localStorage.getItem(STORAGE_KEY);
+
+  if (!saved) {
+    showError("Спочатку збережіть початкові дані.");
+    return;
+  }
+
+  let startData;
+
+  try {
+    startData = JSON.parse(saved);
+  } catch (error) {
+    showError("Не вдалося прочитати початкові дані.");
+    return;
+  }
+
+
+  const currentDateString =
+    document.getElementById("currentDate").value;
+
+  const currentValueString =
+    document.getElementById("currentVal").value.trim();
+
+
+  if (!currentDateString) {
+    showError("Вкажіть поточну дату.");
+    return;
+  }
+
+  if (
+    currentValueString === "" ||
+    !/^[0-9]+$/.test(currentValueString)
+  ) {
+    showError("Поточне показання повинно бути цілим числом.");
+    return;
+  }
+
+
+  const startDate = parseDate(startData.date);
+  const currentDate = parseDate(currentDateString);
+
+  if (!startDate || !currentDate) {
+    showError("Одна з дат некоректна.");
+    return;
+  }
+
+
+  const startValue = Number(startData.value);
+  const currentValue = Number(currentValueString);
+
+
+  // --------------------------------------------------------
+  // Количество дней
+  // --------------------------------------------------------
+
+  const millisecondsPerDay = 86400000;
+
+  const days = Math.floor(
+    (currentDate - startDate) / millisecondsPerDay
+  );
+
+
+  if (days <= 0) {
+    showError(
+      "Поточна дата повинна бути пізніше стартової."
+    );
+    return;
+  }
+
+
+  // --------------------------------------------------------
+  // Использовано всего
+  // --------------------------------------------------------
+
+  const used = currentValue - startValue;
+
+
+  if (used < 0) {
+    showError(
+      "Поточне показання не може бути меншим за початкове."
+    );
+    return;
+  }
+
+
+  // --------------------------------------------------------
+  // Среднее за сутки
+  // --------------------------------------------------------
+
+  const average = used / days;
+
+
+  // --------------------------------------------------------
+  // Норма
+  // --------------------------------------------------------
+
+  const expected = days * 4;
+
+
+  // --------------------------------------------------------
+  // Отклонение от нормы
+  // --------------------------------------------------------
+
+  const difference = used - expected;
+
+
+  // --------------------------------------------------------
+  // Вывод результатов
+  // --------------------------------------------------------
+
+  document.getElementById("daysResult").textContent =
+    days;
+
+  document.getElementById("usedResult").textContent =
+    `${used} год`;
+
+  document.getElementById("averageResult").textContent =
+    `${average.toFixed(2)} год`;
+
+
+  const status = document.getElementById("status");
+
+
+  if (used >= expected) {
+
+    status.className = "status normal";
+
+    status.innerHTML =
+      `СТАТУС: НОРМА!<br>
+       <small>Потрібно: ${expected} год</small><br>
+       Запас: +${difference} год`;
+
+  } else {
+
+    const deficit = Math.abs(difference);
+
+    status.className = "status behind";
+
+    status.innerHTML =
+      `СТАТУС: ВІДСТАВАННЯ!<br>
+       <small>Потрібно: ${expected} год</small><br>
+       Не вистачає: -${deficit} год`;
+  }
+
+
+  document.getElementById("result").style.display = "block";
+
+  // Прокрутка к результату.
+  document.getElementById("result").scrollIntoView({
+    behavior: "smooth",
+    block: "start"
+  });
+}
+
+
+// ----------------------------------------------------------
+// Инициализация страницы
+// ----------------------------------------------------------
+
+document.getElementById("currentDate").value = todayISO();
+
+loadStartData();
+
+</script>
+
+</body>
+</html>
