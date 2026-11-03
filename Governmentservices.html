@@ -7,8 +7,9 @@
 
     
     <title>Корисне</title>
+
     <style>
-        * {
+         {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
@@ -18,18 +19,18 @@
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
-            padding: 40px 20px;
+            padding: 20px 30px;
         }
 
         .container {
-            max-width: 1600px;
+            max-width: 1700px;
             margin: 0 auto;
         }
 
         h1 {
             text-align: center;
             color: white;
-            font-size: 2.5rem;
+            font-size: 2.0rem;
             margin-bottom: 10px;
             text-shadow: 0 2px 4px rgba(0,0,0,0.2);
         }
@@ -44,20 +45,20 @@
         .grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 24px;
+            gap: 34px;
         }
 
         .card {
             background: white;
             border-radius: 16px;
-            padding: 28px;
+            padding: 18px;
             text-decoration: none;
             color: inherit;
             transition: transform 0.3s ease, box-shadow 0.3s ease;
             box-shadow: 0 4px 6px rgba(0,0,0,0.1);
             display: flex;
             flex-direction: column;
-            height: 100%;
+            height: 90%;
         }
 
         .card:hover {
@@ -65,32 +66,29 @@
             box-shadow: 0 12px 24px rgba(0,0,0,0.2);
         }
 
-        .card-icon {
-            width: 50px;
-            height: 50px;
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 22px;
-            margin-bottom: 1px;
-            flex-shrink: 0;
-        }
+        .card-icon img {
+    width: 40px;
+    height: 40px;
+    object-fit: contain;     /* вписывает картинку в квадрат без искажений */
+    background: ;     /* светлый фон под прозрачные иконки */
+    border-radius: 12px;
+    padding: 6px;            /* отступ внутри квадратика */
+}
 
         .card h2 {
-            font-size: 1.25rem;
-            margin-bottom: 2px;
+            font-size: 1.0rem;
+            margin-bottom: 8px; //рассточние между строками
             color: #1a1a2e;
         }
 
         .card p {
             font-size: 0.95rem;
             color: #666;
-            line-height: 1;
+            line-height: 1.0; //размер карточки по вертикали
             flex-grow: 1;
         }
 
-        .card .tag {
+        /*.card .tag {
             display: inline-block;
             margin-top: 16px;
             padding: 4px 12px;
@@ -98,7 +96,7 @@
             font-size: 0.8rem;
             font-weight: 600;
             align-self: flex-start;
-        }
+        }*/
 
         /* Цветовые схемы для карточек */
         .card-blue .card-icon { background: #e8f4fd; color: #2196f3; }
@@ -118,6 +116,14 @@
 
         .card-teal .card-icon { background: #e0f2f1; color: #009688; }
         .card-teal .tag { background: #e0f2f1; color: #009688; }
+
+        /* Pink — мягкий розовый */
+        .card-pink .card-icon { background: #fff0f6; color: #eb2f96; }
+        .card-pink .tag      { background: #fff0f6; color: #eb2f96; }
+
+        /* Red — алый/красный (если тоже нужен) */
+        .card-red .card-icon  { background: #fff1f0; color: #f5222d; }
+        .card-red .tag       { background: #fff1f0; color: #f5222d; }
 
         .footer {
             text-align: center;
@@ -144,110 +150,163 @@
         
         </p>
     </div>
-    
-
-    <script>
+  <script>
+    const resources = [
+        {
+        title: "Google-перекладач",
+        desc: "Безкоштовний сервіс Google",
+        url: "https://translate.google.com/?sl=ru&tl=uk&op=translate",
+        domain: "translate.google.com",
+        color: "teal",  // blue / green / orange / purple / red / teal
+        tag: ""
+        },
+        {
+        title: "«Приват-24»",
+        desc: "Украинский интернет-банкинг",
+        url: "https://next.privat24.ua/",
+        icon: "", 
+        domain: "privatbank.ua",
+        color: "green",
+        tag: ""
+        },
+        {
+        title: "Фінанси LIGA.net",
+        desc: "Онлайн конвертер валют",
+        url: "https://finance.liga.net/ua/currency/converter",
+        icon: "",
+        domain: "finance.liga.net",
+        color: "pink",
+        tag: ""
+        }, 
+        {
+        title: "Законодавство України",
+        desc: "Електронний архів документів та ін.",
+        url: "https://www.rada.gov.ua/news/zak",
+        icon: "",
+        domain: "rada.gov.ua",
+        color: "blue",
+        tag: ""
+        },
+        {
+        title: "Пенсійний фонд України",
+        desc: "Портал електронних послуг",
+        url: "https://portal.pfu.gov.ua/",
+        icon: "",
+        domain: "portal.pfu.gov.ua",
+        color: "green",
+        tag: ""
+        },
+        {
+        title: "Податкова служба",
+        desc: "Електронний кабінет",
+        url: "https://cabinet.tax.gov.ua/login",
+        icon: "🇺🇦",
+        domain: "cabinet.tax.gov.ua",
+        color: "blue",
+        tag: ""
+        },
+        {
+        title: "«Опендатабот»",
+        desc: "Сервіс моніторингу реєстрів",
+        url: "https://opendatabot.ua/",
+        icon: "",
+        domain: "opendatabot.ua", 
+        color: "orange",
+        tag: ""
+        },
+        {
+        title: "«ЄЛіки»",
+        desc: "Онлайн-ресурс наявності ліків",
+        url: "https://eliky.in.ua/",
+        icon: "",
+        domain: "eliky.in.ua",
+        color: "teal",
+        tag: ""
+        },          
+        {
+        title: "«Аптека 9-1-1»",
+        desc: "Аптечна екосистема в Україні",
+        url: "https://apteka911.ua/ua/map/ukraina",
+        icon: "",
+        domain: "apteka911.ua",
+        color: "orange",
+        tag: ""
+        },
+        {
+        title: "«Нова пошта»",
+        desc: "Лідер експрес-доставки в Україні",
+        url: "https://novaposhta.ua/",
+        icon: "",
+        domain: "novaposhta.ua",
+        color: "blue",
+        tag: ""
+        },
        
-        const resources = [                
-            {
-                title: "Google-перекладач",
-                desc: "Безкоштовний сервіс Google",
-                url: "https://translate.google.com/?sl=ru&tl=uk&op=translate",
-                icon: "🌐",
-                color: "blue",
-                tag: "Робота з документами"
-            },
-            {
-                title: "Середній курс валют",
-                desc: "Онлайн конвертер валют",
-                url: "https://finance.liga.net/ua/currency/converter",
-                icon: "💱",
-                color: "blue",
-                tag: "Фінанси LIGA.net"
-            },
-            {
-                title: "«Приват-24»",
-                desc: "Украинский интернет-банкинг",
-                url: "https://next.privat24.ua/",
-                icon: "🪎",
-                color: "blue",
-                tag: "Фінанси"
-            },
-            {
-                title: "Пенсійний фонд України",
-                desc: "Портал електронних послуг",
-                url: "https://portal.pfu.gov.ua/",
-                icon: "🏦",
-                color: "blue",
-                tag: "Вхід до особистого кабінету"
-            },
-            {
-                title: "Податкова служба",
-                desc: "Електронний кабінет",
-                url: "https://cabinet.tax.gov.ua/login",
-                icon: "🇺🇦",
-                color: "blue",
-                tag: "Вхід до особистого кабінету"
-            },            
-            {
-                title: "«Нова пошта»",
-                desc: "Лідер доставки в Україні",
-                url: "https://novaposhta.ua/",
-                icon: "✉",
-                color: "blue",
-                tag: "Експрес-доставка"
-            },
-            {
-                title: "«ЄЛіки»",
-                desc: "Наявність ліків у лікарні",
-                url: "https://eliky.in.ua/",
-                icon: "🚑",
-                color: "blue",
-                tag: "Інформація про ліки"
-            },
-            {
-                title: "«Аптека 9-1-1»",
-                desc: "Медична інформаційна система",
-                url: "https://apteka911.ua/ua/map/ukraina",
-                icon: "🏥",
-                color: "blue",
-                tag: "Ліки онлайн"
-            },
-            {
-                title: "«Нафтогаз України»",
-                desc: "Нафтогазова компанія України",
-                url: "https://my.gas.ua/",
-                icon: "♨",
-                color: "blue",
-                tag: "Вхід до особистого кабінету"
-            },
-            {
-                title: "«Опендатабот»",
-                desc: "Сервіс моніторингу реєстрів",
-                url: "https://opendatabot.ua/",
-                icon: "💼",
-                color: "blue",
-                tag: "Вхід до особистого кабінету"
-            }
-        ];
-
-        // === ГЕНЕРАЦИЯ КАРТОЧЕК ===https://opendatabot.ua/
-        const grid = document.getElementById('cards-grid');
-
-        resources.forEach(resource => {
-            const card = document.createElement('a');
-            card.href = resource.url;
-            card.target = "_blank";
-            card.rel = "noopener noreferrer";
-            card.className = `card card-${resource.color}`;
-            card.innerHTML = `
-                <div class="card-icon">${resource.icon}</div>
-                <h2>${resource.title}</h2>
-                <p>${resource.desc}</p>
-                <span class="tag">${resource.tag}</span>
-            `;
-            grid.appendChild(card);
-        });
-    </script>
+        {
+        title: "2ip.ua",
+        desc: "Діагностика інтернет-з'єднання",
+        url: "https://2ip.ua/ua/",
+        domain: "2ip.ua",
+        color: "teal",  // blue / green / orange / purple / red / teal/ pink
+        tag: ""
+        },
+        {
+        title: "«PDF24»",
+        desc: "Безкоштовні рішення для PDF",
+        url: "https://tools.pdf24.org/uk/all-tools",
+        icon: "", 
+        domain: "www.pdf24.org",
+        color: "pink",
+        tag: ""
+        },
+        {
+        title: "iLoveIMG",
+        desc: "Сервіс для роботи із зображеннями",
+        url: "https://www.iloveimg.com/uk",
+        icon: "",
+        domain: "iloveimg.com",
+        color: "blue",
+        tag: ""
+        }, 
+        {
+        title: "Files.fm",
+        desc: "Хмарне зберігання та обмін файлів",
+        url: "https://ua.files.fm/",
+        icon: "",
+        domain: "ua.files.fm",
+        color: "purple",
+        tag: ""
+        },
+        {
+        title: "ChatGPT",
+        desc: "Generative Pre-trained Transformer ",
+        url: "https://chatgpt.com",
+        icon: "",
+        domain: "chatgpt.com",
+        color: "teal",
+        tag: ""
+        }                
+    ];
+</script>
+<script>
+    const grid = document.getElementById('cards-grid');
+    resources.forEach(resource => {
+        const card = document.createElement('a');
+        card.href = resource.url;
+        card.target = "_blank";
+        card.rel = "noopener noreferrer";
+        card.className = `card card-${resource.color}`;
+        card.innerHTML = `
+            <div class="card-icon">
+    <img src="https://www.google.com/s2/favicons?domain=${resource.domain}&sz=64" alt="">
+</div>
+            <h2>${resource.title}</h2>
+            <p>${resource.desc}</p>
+            <span class="tag">${resource.tag}</span>
+        `;
+        grid.appendChild(card);
+    });
+</script>
 </body>
 </html>
+
