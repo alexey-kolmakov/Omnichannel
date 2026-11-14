@@ -1,10 +1,9 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-<meta charset="UTF-8">
- <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="icon" >
-
+  <meta charset="UTF-8">
+ 
+  <link id="favicon" rel="icon" href="">
     
 <title>𝒜𝒦 - лаунчер</title>
 
@@ -3312,6 +3311,67 @@ addBook("📙 Основы работы с терминалом", "https://www.8
         </table>
     </div>
 </section>
-</body>
+<script>
+const fav = document.getElementById('favicon');
+const canvas = document.createElement('canvas');
+canvas.width = canvas.height = 64;
+const ctx = canvas.getContext('2d');
+
+function hand(angleDeg, length, width) {
+  const a = (angleDeg - 90) * Math.PI / 180; // 0 градусов = вверх
+  ctx.lineWidth = width;
+  ctx.lineCap = 'round';
+  ctx.strokeStyle = '#f5c518';
+  ctx.beginPath();
+  ctx.moveTo(32, 32);
+  ctx.lineTo(32 + Math.cos(a) * length, 32 + Math.sin(a) * length);
+  ctx.stroke();
+}
+
+function tick() {
+  const now = new Date();
+  const s = now.getSeconds();
+  const m = now.getMinutes() + s / 60;
+  const h = (now.getHours() % 12) + m / 60;
+
+  // фон вкладки — тёмный, чтобы не сливался с белым циферблатом
+  ctx.fillStyle = '#1e1e2e';
+  ctx.fillRect(0, 0, 64, 64);
+
+  // ← белый круг-циферблат
+  ctx.fillStyle = '#ffffff';
+  ctx.beginPath();
+  ctx.arc(32, 32, 27, 0, Math.PI * 2);
+  ctx.fill();
+
+  // тонкая рамка вокруг циферблата
+  ctx.strokeStyle = '#ccc';
+  ctx.lineWidth = 2;
+  ctx.stroke();
+
+  // ← чёрные стрелки
+  function hand(angleDeg, length, width) {
+    const a = (angleDeg - 90) * Math.PI / 180;
+    ctx.strokeStyle = '#000';
+    ctx.lineWidth = width;
+    ctx.lineCap = 'round';
+    ctx.beginPath();
+    ctx.moveTo(32, 32);
+    ctx.lineTo(32 + Math.cos(a) * length, 32 + Math.sin(a) * length);
+    ctx.stroke();
+  }
+
+  hand(h * 30, 13, 5);  // часовая
+  hand(m * 6, 20, 3);   // минутная
+
+  // центральная точка
+  ctx.fillStyle = '#000';
+  ctx.beginPath();
+  ctx.arc(32, 32, 3, 0, Math.PI * 2);
+  ctx.fill();
+
+  fav.href = canvas.toDataURL('image/png');
+}
+</script>
 </body>
 </html>
