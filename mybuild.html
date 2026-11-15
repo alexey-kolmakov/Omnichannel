@@ -3324,47 +3324,24 @@ addBook("📙 Основы работы с терминалом", "https://www.8
     </div>
 </section>
 <script>
-// Создаём canvas, рисуем циферблат 10:10, сохраняем как PNG
 const c = document.createElement('canvas');
 c.width = c.height = 180;
 const x = c.getContext('2d');
 
-// фон
-x.fillStyle = '#1e1e2e';
+// градиент
+const g = x.createLinearGradient(0, 0, 180, 180);
+g.addColorStop(0, '#7e57c2');
+g.addColorStop(1, '#42a5f5');
+x.fillStyle = g;
 x.fillRect(0, 0, 180, 180);
 
-// белый циферблат
+// буквы
 x.fillStyle = '#fff';
-x.beginPath();
-x.arc(90, 90, 75, 0, Math.PI * 2);
-x.fill();
+x.font = 'bold 100px Arial';
+x.textAlign = 'center';
+x.textBaseline = 'middle';
+x.fillText('OK', 90, 98);
 
-// чёрные стрелки (10:10)
-x.strokeStyle = '#000';
-x.lineCap = 'round';
-
-// часовая: 10 * 30 = 300°, минутная: 10 * 6 = 60°
-function hand(angle, len, width) {
-  const a = (angle - 90) * Math.PI / 180;
-  x.lineWidth = width;
-  x.beginPath();
-  x.moveTo(90, 90);
-  x.lineTo(90 + Math.cos(a) * len, 90 + Math.sin(a) * len);
-  x.stroke();
-}
-const png = c.toDataURL('image/png');
-document.querySelector('link[rel="apple-touch-icon"]').href = png;
-document.querySelector('link[rel="icon"]').href = png;
-hand(300, 40, 12);  // часовая
-hand(60, 55, 8);    // минутная
-
-// точка в центре
-x.fillStyle = '#000';
-x.beginPath();
-x.arc(90, 90, 6, 0, Math.PI * 2);
-x.fill();
-
-// сохраняем как PNG и подставляем
 document.querySelector('link[rel="apple-touch-icon"]').href = c.toDataURL('image/png');
 </script>
 </body>
