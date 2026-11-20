@@ -352,6 +352,9 @@
     });
 </script>
 <script>
+const isMobile =
+    /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+
 const logo = document.getElementById("logo");
 
 
@@ -393,8 +396,11 @@ logo.addEventListener("touchstart", () => {
             window.open("", "_blank");
         }
 
-        if (taps === 5) {
-            window.open("https://alexey-kolmakov.github.io/workshop/tabl.html", "_blank");
+       if (taps === 5) {
+    alert("5 тапов обнаружено!");
+}(
+            "https://alexey-kolmakov.github.io/workshop/tabl.html",
+            "_blank");
         }
 
         taps = 0;
