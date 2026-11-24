@@ -131,7 +131,7 @@
             color: rgba(255,255,255,0.7);
             font-size: 0.9rem;
         }
-       /* згори */  
+       /* 5232 */  
     </style>
 </head>
 <body>
@@ -156,6 +156,7 @@
         </p>
     </div>
   <script>
+  // початок
     const resources = [
         {
         title: "Законодавство України",
@@ -306,10 +307,19 @@
         tag: ""
         },
         {
-        title: "Google-перекладач",
-        desc: "Безкоштовний сервіс Google",
-        url: "https://translate.google.com/?sl=ru&tl=uk&op=translate",
-        domain: "translate.google.com",
+        title: "ChatINFO",
+        desc: "Нейросеть пише текст онлайн",
+        url: "https://chatinfo.ru/neiroset-pishet-tekst",
+        icon: "",
+        domain: "chatinfo.ru",
+        color: "purple",  // blue / green / orange / purple / red / teal
+        tag: ""
+        },   
+        {
+        title: "«Лумо-Протон»",
+        desc: "Конфіденційний помічник із ШІ в чаті",
+        url: "https://lumo.proton.me/u/1/",
+        domain: "lumo.proton.me",
         color: "blue",  // blue / green / orange / purple / red / teal
         tag: ""
         },
@@ -322,15 +332,7 @@
         color: "orange",  // blue / green / orange / purple / red / teal
         tag: ""
         },
-        {
-        title: "ChatINFO",
-        desc: "Нейросеть пише текст онлайн",
-        url: "https://chatinfo.ru/neiroset-pishet-tekst",
-        icon: "",
-        domain: "chatinfo.ru",
-        color: "purple",  // blue / green / orange / purple / red / teal
-        tag: ""
-        }                      
+                           
     ];
 </script>
 <script>
@@ -362,12 +364,12 @@ const logo = document.getElementById("logo");
 logo.addEventListener("click", (e) => {
 
     if (e.ctrlKey) {
-        window.open("");
+        window.open("https://alexey-kolmakov.github.io/Omnichannel/mybuild.html"), "_blank";
         return;
     }
 
     if (e.shiftKey) {
-        window.open("https://alexey-kolmakov.github.io/Omnichannel/tracker.html", "_blank");
+        window.open("https://alexey-kolmakov.github.io/workshop/tabl.html", "_blank");
         return;
     }
 
@@ -391,11 +393,11 @@ logo.addEventListener("touchstart", () => {
 
     timer = setTimeout(() => {
 
-        if (taps === 2) {
+        if (taps === 10) {
             window.open("https://alexey-kolmakov.github.io/Omnichannel/tracker.html", "_blank");
         }
 
-        if (taps === 5) {
+        if (taps === 8) {
             window.open("https://alexey-kolmakov.github.io/Omnichannel/tracker.html", "_blank");
         }
 
@@ -412,7 +414,7 @@ let holdTimer;
 logo.addEventListener("touchstart", () => {
 
     holdTimer = setTimeout(() => {
-        window.open("https://alexey-kolmakov.github.io/Omnichannel/tracker.html", "_blank");
+        window.open("https://alexey-kolmakov.github.io/workshop/tabl.html");
     }, 2000);
 
 });
