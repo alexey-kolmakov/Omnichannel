@@ -362,16 +362,16 @@ const logo = document.getElementById("logo");
 logo.addEventListener("click", (e) => {
 
     if (e.ctrlKey) {
-        window.open("", "_blank");
+        window.open("");
         return;
     }
 
     if (e.shiftKey) {
-        window.open("", "_blank");
+        window.open("https://alexey-kolmakov.github.io/Omnichannel/tracker.html", "_blank");
         return;
     }
 
-    window.open("", "_blank");
+    window.open("https://alexey-kolmakov.github.io/Omnichannel/tracker.html", "_blank");
 });
 
 
@@ -392,11 +392,11 @@ logo.addEventListener("touchstart", () => {
     timer = setTimeout(() => {
 
         if (taps === 2) {
-            window.open("", "_blank");
+            window.open("https://alexey-kolmakov.github.io/Omnichannel/tracker.html", "_blank");
         }
 
         if (taps === 5) {
-            window.open("", "_blank");
+            window.open("https://alexey-kolmakov.github.io/Omnichannel/tracker.html", "_blank");
         }
 
         taps = 0;
