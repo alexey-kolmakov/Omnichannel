@@ -131,6 +131,7 @@
             color: rgba(255,255,255,0.7);
             font-size: 0.9rem;
         }
+       /* згори */  
     </style>
 </head>
 <body>
@@ -361,16 +362,16 @@ const logo = document.getElementById("logo");
 logo.addEventListener("click", (e) => {
 
     if (e.ctrlKey) {
-        window.open("https://alexey-kolmakov.github.io/workshop/tabl.html", "_blank");
+        window.open("", "_blank");
         return;
     }
 
     if (e.shiftKey) {
-        window.open("https://alexey-kolmakov.github.io/Omnichannel/mybuild.html", "_blank");
+        window.open("", "_blank");
         return;
     }
 
-    window.open("https://alexey-kolmakov.github.io/workshop/contact.html", "_blank");
+    window.open("", "_blank");
 });
 
 
@@ -391,11 +392,11 @@ logo.addEventListener("touchstart", () => {
     timer = setTimeout(() => {
 
         if (taps === 2) {
-            window.open("https://alexey-kolmakov.github.io/workshop/contact.html", "_blank");
+            window.open("", "_blank");
         }
 
         if (taps === 5) {
-            window.open("https://alexey-kolmakov.github.io/workshop/contact.html", "_blank");
+            window.open("", "_blank");
         }
 
         taps = 0;
@@ -411,7 +412,7 @@ let holdTimer;
 logo.addEventListener("touchstart", () => {
 
     holdTimer = setTimeout(() => {
-        window.open("https://alexey-kolmakov.github.io/workshop/linkage.html", "_blank");
+        window.open("https://alexey-kolmakov.github.io/Omnichannel/tracker.html", "_blank");
     }, 2000);
 
 });
