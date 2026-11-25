@@ -1,10 +1,12 @@
 <!DOCTYPE html>
-<html lang="uk">
+<html lang="ru">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="theme-color" content="#2c3e50">
-  <title>TRACKER</title>
+    <meta charset="UTF-8">
+    <meta name="theme-color" content="#f5f0fa" media="(prefers-color-scheme: light)">
+    <meta name="theme-color" content="#4a3d6b" media="(prefers-color-scheme: dark)">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>🕖 TRACKER</title>
 
   <style>
     * {
@@ -136,6 +138,27 @@
       font-size: 12px;
       margin-top: 20px;
     }
+    
+   /* часы */ 
+ .header-row {
+  display: flex;
+  align-items: center;      /* часы по центру высоты заголовка */
+  gap: 16px;
+  padding: 12px;
+  touch-action: none;       /* важно: без этого телефон "заберёт" свайп себе */
+  cursor: grab;
+}
+
+#clock {
+  width: clamp(56px, 14vw, 120px);  /* адаптивный размер */
+  height: auto;
+  aspect-ratio: 1;                   /* всегда квадрат */
+  flex-shrink: 0;
+}
+
+h1 { margin: 0; font-size: clamp(1.3rem, 5vw, 2.5rem); }
+
+    
   </style>
 </head>
 
@@ -143,16 +166,24 @@
 
 <div class="container">
 
-  <h1>TRACKER</h1>
+ <div id="mor" style="display: flex; align-items: center; gap: 16px; padding: 12px; cursor: pointer;">
+  <canvas id="clock"></canvas>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  <span><h1>TRACKER</h1></span>
+</div>
 
+ 
   <!-- =====================================================
        ПОЧАТКОВІ ДАНІ
        Зберігаються тільки на цьому пристрої.
        ===================================================== -->
 
   <div class="card">
-
-    <h2>Початкові дані</h2>
+  
+  <div id="ser" style="cursor: pointer; padding: 12px; text-align: center; color: #666;">
+  <p class="footer">
+    <span><h2>Початкові дані&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;✔️</h2></span>
+  </p>
+</div>
 
     <label for="startDate">Дата початку контролю</label>
     <input type="date" id="startDate">
@@ -196,8 +227,13 @@
        ===================================================== -->
 
   <div class="card">
+  <div id="TR" style="cursor: pointer; padding: 12px; text-align: center; color: #666;">
+  <p class="footer">
+    <span><h2>Поточні дані&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;✔️</h2></span>
+  </p>
+</div>
 
-    <h2>Поточні дані</h2>
+    
 
     <label for="currentDate">Поточна дата</label>
     <input type="date" id="currentDate">
@@ -716,6 +752,133 @@ document.getElementById("currentDate").value = todayISO();
 loadStartData();
 
 </script>
+<script>
+const canvas = document.getElementById('clock');
+const ctx = canvas.getContext('2d');
+
+// --- рисуем в высоком качестве (для ретины) ---
+function resize() {
+  const dpr = window.devicePixelRatio || 1;
+  const cssSize = canvas.clientWidth;
+  canvas.width = canvas.height = Math.round(cssSize * dpr);
+  tick();
+}
+
+function hand(angleDeg, length, width, color) {
+  const a = (angleDeg - 90) * Math.PI / 180;
+  ctx.strokeStyle = color;
+  ctx.lineWidth = width;
+  ctx.lineCap = 'round';
+  ctx.beginPath();
+  ctx.moveTo(c, c);
+  ctx.lineTo(c + Math.cos(a) * length, c + Math.sin(a) * length);
+  ctx.stroke();
+}
+
+let c; // центр, пересчитывается при каждом рисовании
+function tick() {
+  const size = canvas.width;
+  c = size / 2;
+  const now = new Date();
+  const s = now.getSeconds() + now.getMilliseconds() / 1000;
+  const m = now.getMinutes() + s / 60;
+  const h = (now.getHours() % 12) + m / 60;
+  const k = size / 200; // масштаб от базовых 200px
+
+  ctx.clearRect(0, 0, size, size);
+
+  ctx.fillStyle = '#fff';
+  ctx.beginPath();
+  ctx.arc(c, c, c - 6 * k, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.strokeStyle = '#ccc';
+  ctx.lineWidth = 2 * k;
+  ctx.stroke();
+
+  // метки часов
+  ctx.strokeStyle = '#999';
+  ctx.lineWidth = 2 * k;
+  for (let i = 0; i < 12; i++) {
+    const a = i * 30 * Math.PI / 180;
+    ctx.beginPath();
+    ctx.moveTo(c + Math.cos(a) * (c - 12 * k), c + Math.sin(a) * (c - 12 * k));
+    ctx.lineTo(c + Math.cos(a) * (c - 6 * k), c + Math.sin(a) * (c - 6 * k));
+    ctx.stroke();
+  }
+
+  hand(h * 30, c * 0.45, 6 * k, '#000');   // часовая
+  hand(m * 6,  c * 0.7,  4 * k, '#000');   // минутная
+  hand(s * 6,  c * 0.78, 1.5 * k, '#e74c3c'); // секундная — плавный ход!
+
+  ctx.fillStyle = '#000';
+  ctx.beginPath();
+  ctx.arc(c, c, 4 * k, 0, Math.PI * 2);
+  ctx.fill();
+
+  requestAnimationFrame(tick); // плавная анимация
+}
+
+window.addEventListener('resize', resize);
+resize();
+
+// --- перетаскивание блока "часы + заголовок" ---
+const row = document.getElementById('headerRow');
+let startX, startY, ox = 0, oy = 0, dragging = false;
+
+row.addEventListener('pointerdown', e => {
+  dragging = true;
+  startX = e.clientX - ox;
+  startY = e.clientY - oy;
+  row.style.cursor = 'grabbing';
+  row.setPointerCapture(e.pointerId);
+});
+row.addEventListener('pointermove', e => {
+  if (!dragging) return;
+  ox = e.clientX - startX;
+  oy = e.clientY - startY;
+  row.style.transform = `translate(${ox}px, ${oy}px)`;
+});
+row.addEventListener('pointerup', () => {
+  dragging = false;
+  row.style.cursor = 'grab';
+});
+</script>
+<script>
+
+let clicks = 0;
+const counters = {};
+
+const el = document.getElementById("ser");
+if (el) {
+  el.onclick = () => {
+    clicks++;
+    if (clicks >= 3) {
+      window.open("https://github.com/alexey-kolmakov", "_blank");
+    }
+  };
+}
+
+const mor = document.getElementById("mor");
+if (mor) {
+  mor.onclick = () => {
+    counters["mor"] = (counters["mor"] || 0) + 1;
+    if (counters["mor"] >= 5) {
+      window.open("https://alexey-kolmakov.github.io/Omnichannel/mybuild.html", "_blank");
+    }
+  };
+}
+
+const tr = document.getElementById("TR");
+if (tr) {
+  tr.onclick = () => {
+    counters["TR"] = (counters["TR"] || 0) + 1;
+    if (counters["TR"] >= 5) {
+      window.open("https://github.com/alexey-kolmakov", "_blank");
+    }
+  };
+}
+</script>
 
 </body>
 </html>
+
